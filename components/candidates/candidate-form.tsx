@@ -43,6 +43,7 @@ export function CandidateForm({ jobs, candidateId, defaultValues }: Props) {
     control,
     handleSubmit,
     setError,
+    getValues,
     formState: { errors, isSubmitting },
   } = useForm<CandidateInput, unknown, CandidateOutput>({
     resolver: zodResolver(candidateSchema),
@@ -58,7 +59,10 @@ export function CandidateForm({ jobs, candidateId, defaultValues }: Props) {
     },
   });
 
-  const submit = handleSubmit(async (values) => {
+  // Send the raw input, not the parsed output: the action re-parses it, and
+  // skills is a string going in but an array coming out.
+  const submit = handleSubmit(async () => {
+    const values = getValues();
     const result = candidateId
       ? await updateCandidate(candidateId, values)
       : await createCandidate(values);
