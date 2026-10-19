@@ -34,3 +34,13 @@ export const SOURCE_LABELS: Record<Source, string> = {
   CAREERS_PAGE: "Careers page",
   OTHER: "Other",
 };
+
+// Mid-tone hues matching the badges; readable on light and dark backgrounds.
+export const STAGE_CHART_COLORS: Record<Stage, string> = {
+  APPLIED: "#94a3b8",
+  SCREENING: "#0ea5e9",
+  INTERVIEW: "#8b5cf6",
+  OFFER: "#f59e0b",
+  HIRED: "#22c55e",
+  REJECTED: "#ef4444",
+};

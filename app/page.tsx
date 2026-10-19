@@ -1,12 +1,31 @@
 import { Activity, Briefcase, Clock, UserCheck, Users, type LucideIcon } from "lucide-react";
 
+import { ApplicationsChart } from "@/components/dashboard/applications-chart";
+import { PipelineChart } from "@/components/dashboard/pipeline-chart";
+import { RecentActivity } from "@/components/dashboard/recent-activity";
+import { SourceChart } from "@/components/dashboard/source-chart";
+import { StageChart } from "@/components/dashboard/stage-chart";
 import { Card, CardContent } from "@/components/ui/card";
-import { getKpis } from "@/lib/dashboard";
+import {
+  getKpis,
+  getPipelineByJob,
+  getRecentActivity,
+  getSourceCounts,
+  getStageCounts,
+  getWeeklyApplications,
+} from "@/lib/dashboard";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const [kpis] = await Promise.all([getKpis()]);
+  const [kpis, stages, sources, weekly, pipeline, activity] = await Promise.all([
+    getKpis(),
+    getStageCounts(),
+    getSourceCounts(),
+    getWeeklyApplications(),
+    getPipelineByJob(),
+    getRecentActivity(),
+  ]);
 
   const cards: { label: string; value: string | number; hint: string; icon: LucideIcon }[] = [
     { label: "Total candidates", value: kpis.total, hint: "All time", icon: Users },
@@ -41,6 +60,14 @@ export default async function DashboardPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <StageChart data={stages} />
+        <ApplicationsChart data={weekly} />
+        <SourceChart data={sources} />
+        <RecentActivity items={activity} />
+        <PipelineChart data={pipeline} />
       </div>
     </div>
   );
