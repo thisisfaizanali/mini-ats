@@ -1,0 +1,48 @@
+import { JobStatus, Source, Stage } from "@prisma/client";
+import { z } from "zod";
+
+const text = (min: number, max: number) => z.string().trim().min(min).max(max);
+
+export const jobSchema = z.object({
+  title: text(2, 100),
+  department: text(2, 100),
+  location: text(2, 100),
+  status: z.enum(JobStatus),
+  description: z.string().trim().max(2000).optional(),
+});
+
+export const candidateSchema = z.object({
+  name: text(2, 100),
+  email: z.string().trim().toLowerCase().pipe(z.email()),
+  phone: z.string().trim().max(20).optional(),
+  skills: z
+    .string()
+    .transform((s) => [
+      ...new Set(
+        s
+          .split(",")
+          .map((x) => x.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    ])
+    .pipe(
+      z
+        .array(z.string())
+        .min(1, "Add at least one skill")
+        .max(15, "Add at most 15 skills"),
+    ),
+  source: z.enum(Source),
+  jobId: z.string().min(1, "Pick a job"),
+  resumeUrl: z
+    .union([z.url(), z.literal("")])
+    .optional()
+    .transform((v) => v || undefined),
+  notes: z.string().trim().max(2000).optional(),
+});
+
+export const stageSchema = z.enum(Stage);
+
+export type JobInput = z.input<typeof jobSchema>;
+export type JobOutput = z.output<typeof jobSchema>;
+export type CandidateInput = z.input<typeof candidateSchema>;
+export type CandidateOutput = z.output<typeof candidateSchema>;
