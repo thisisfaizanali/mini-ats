@@ -18,7 +18,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Dashboard" };
+// The layout's title template only applies to child segments.
+export const metadata: Metadata = { title: { absolute: "Dashboard · Mini ATS" } };
 
 export default async function DashboardPage() {
   const [kpis, stages, sources, weekly, pipeline, activity] = await Promise.all([
