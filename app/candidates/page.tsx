@@ -2,6 +2,7 @@ import { Users } from "lucide-react";
 import Link from "next/link";
 
 import { CandidateFilters } from "@/components/candidates/candidate-filters";
+import { Pagination } from "@/components/candidates/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +16,8 @@ import {
 import {
   buildCandidateOrderBy,
   buildCandidateWhere,
+  hasActiveFilters,
+  PAGE_SIZE,
   parseCandidateParams,
 } from "@/lib/candidate-query";
 import { db } from "@/lib/db";
@@ -28,18 +31,22 @@ export default async function CandidatesPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const params = parseCandidateParams(await searchParams);
+  const sp = await searchParams;
+  const params = parseCandidateParams(sp);
   const where = buildCandidateWhere(params);
-  const [total, candidates, jobs] = await Promise.all([
+  const [total, jobs] = await Promise.all([
     db.candidate.count({ where }),
-    db.candidate.findMany({
-      where,
-      orderBy: buildCandidateOrderBy(params.sort),
-      take: 10,
-      include: { job: { select: { title: true } } },
-    }),
     db.job.findMany({ select: { id: true, title: true }, orderBy: { title: "asc" } }),
   ]);
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const page = Math.min(params.page, totalPages);
+  const candidates = await db.candidate.findMany({
+    where,
+    orderBy: buildCandidateOrderBy(params.sort),
+    skip: (page - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+    include: { job: { select: { title: true } } },
+  });
 
   return (
     <div className="space-y-6">
@@ -57,7 +64,15 @@ export default async function CandidatesPage({
 
       <CandidateFilters jobs={jobs} />
 
-      {candidates.length === 0 ? (
+      {total === 0 && hasActiveFilters(params) ? (
+        <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed p-12 text-center">
+          <Users className="text-muted-foreground size-8" />
+          <p className="font-medium">No candidates match your filters</p>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/candidates">Clear filters</Link>
+          </Button>
+        </div>
+      ) : total === 0 ? (
         <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed p-12 text-center">
           <Users className="text-muted-foreground size-8" />
           <p className="font-medium">No candidates yet</p>
@@ -98,6 +113,8 @@ export default async function CandidatesPage({
           </Table>
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} total={total} searchParams={sp} />
     </div>
   );
 }
