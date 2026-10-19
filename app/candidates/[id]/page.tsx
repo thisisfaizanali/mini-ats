@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { DeleteCandidateButton } from "@/components/candidates/delete-candidate-button";
 import { StageSelect } from "@/components/candidates/stage-select";
+import { StageTimeline } from "@/components/candidates/stage-timeline";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +15,10 @@ export const dynamic = "force-dynamic";
 
 export default async function CandidatePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const candidate = await db.candidate.findUnique({ where: { id }, include: { job: true } });
+  const candidate = await db.candidate.findUnique({
+    where: { id },
+    include: { job: true, history: { orderBy: { changedAt: "desc" } } },
+  });
   if (!candidate) notFound();
 
   return (
@@ -104,6 +108,15 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
             <CardTitle>Notes</CardTitle>
           </CardHeader>
           <CardContent className="text-sm whitespace-pre-wrap">{candidate.notes || "—"}</CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Stage history</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StageTimeline history={candidate.history} />
+          </CardContent>
         </Card>
       </div>
     </div>
