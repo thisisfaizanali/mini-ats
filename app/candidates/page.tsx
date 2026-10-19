@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Download, Users } from "lucide-react";
 import Link from "next/link";
 
@@ -25,6 +26,8 @@ import { formatDate } from "@/lib/format";
 import { SOURCE_LABELS, STAGE_BADGE_CLASSES, STAGE_LABELS } from "@/lib/stages";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = { title: "Candidates" };
 
 export default async function CandidatesPage({
   searchParams,

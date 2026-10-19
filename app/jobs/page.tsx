@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { BriefcaseBusiness } from "lucide-react";
 
 import { NewJobButton } from "@/components/jobs/job-dialog";
@@ -15,6 +16,8 @@ import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = { title: "Jobs" };
 
 export default async function JobsPage() {
   const jobs = await db.job.findMany({

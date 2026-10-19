@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { BoardJobFilter } from "@/components/board/board-job-filter";
 import { KanbanBoard } from "@/components/board/kanban-board";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = { title: "Board" };
 
 export default async function BoardPage({
   searchParams,

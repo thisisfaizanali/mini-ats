@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Activity, Briefcase, Clock, UserCheck, Users, type LucideIcon } from "lucide-react";
 
 import { ApplicationsChart } from "@/components/dashboard/applications-chart";
@@ -16,6 +17,8 @@ import {
 } from "@/lib/dashboard";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = { title: "Dashboard" };
 
 export default async function DashboardPage() {
   const [kpis, stages, sources, weekly, pipeline, activity] = await Promise.all([

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { CandidateForm } from "@/components/candidates/candidate-form";
@@ -5,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = { title: "New candidate" };
 
 export default async function NewCandidatePage() {
   const jobs = await db.job.findMany({

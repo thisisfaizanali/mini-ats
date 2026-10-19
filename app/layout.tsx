@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mini ATS",
-  description: "A small applicant tracking system",
+  title: { default: "Mini ATS", template: "%s · Mini ATS" },
+  description: "A small applicant tracking system for jobs, candidates and hiring stages.",
 };
 
 export default function RootLayout({
