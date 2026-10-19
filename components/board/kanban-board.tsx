@@ -47,13 +47,12 @@ export function KanbanBoard({ candidates }: { candidates: BoardCandidate[] }) {
     const stage = over?.id as Stage | undefined;
     if (!card || !stage || stage === card.stage) return;
 
-    const prev = items;
     setItems(items.map((c) => (c.id === card.id ? { ...c, stage } : c)));
     const result = await updateCandidateStage(card.id, stage);
     if (result.ok) {
       toast.success(`Moved ${card.name} to ${STAGE_LABELS[stage]}`);
     } else {
-      setItems(prev);
+      setItems((cur) => cur.map((c) => (c.id === card.id ? { ...c, stage: card.stage } : c)));
       toast.error(result.error);
     }
   }
