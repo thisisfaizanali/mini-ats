@@ -1,7 +1,8 @@
 import { BriefcaseBusiness } from "lucide-react";
 
+import { NewJobButton } from "@/components/jobs/job-dialog";
+import { JobRowActions } from "@/components/jobs/job-row-actions";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -30,7 +31,7 @@ export default async function JobsPage() {
             Open roles and how many people have applied.
           </p>
         </div>
-        <Button>New job</Button>
+        <NewJobButton />
       </div>
 
       {jobs.length === 0 ? (
@@ -79,7 +80,9 @@ export default async function JobsPage() {
                     {job._count.candidates}
                   </TableCell>
                   <TableCell>{formatDate(job.createdAt)}</TableCell>
-                  <TableCell />
+                  <TableCell>
+                    <JobRowActions job={job} />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
