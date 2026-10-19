@@ -31,3 +31,8 @@ export function formatRelative(d: Date) {
   }
   return relativeFormat.format(0, "second"); // "now"
 }
+
+// en-CA formats as YYYY-MM-DD.
+const isoDateFormat = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata" });
+
+export const formatIsoDate = (d: Date) => isoDateFormat.format(d);

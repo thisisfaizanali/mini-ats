@@ -7,6 +7,7 @@ import {
 } from "@/lib/candidate-query";
 import { toCsv } from "@/lib/csv";
 import { db } from "@/lib/db";
+import { formatIsoDate } from "@/lib/format";
 import { SOURCE_LABELS, STAGE_LABELS } from "@/lib/stages";
 
 export async function GET(request: NextRequest) {
@@ -47,12 +48,10 @@ export async function GET(request: NextRequest) {
         STAGE_LABELS[c.stage],
         SOURCE_LABELS[c.source],
         c.skills.join("; "),
-        c.appliedAt.toISOString().slice(0, 10),
+        formatIsoDate(c.appliedAt),
       ]),
     ];
-    const today = new Date().toLocaleDateString("en-CA", {
-      timeZone: "Asia/Kolkata",
-    });
+    const today = formatIsoDate(new Date());
     return new Response(toCsv(rows), {
       headers: {
         "Content-Type": "text/csv; charset=utf-8",
