@@ -83,3 +83,15 @@ export async function updateCandidate(id: string, input: unknown): Promise<Actio
   revalidate(id);
   return { ok: true, id };
 }
+
+export async function deleteCandidate(id: string): Promise<ActionResult> {
+  try {
+    // Stage history goes with it via onDelete: Cascade.
+    await db.candidate.delete({ where: { id } });
+  } catch (err) {
+    return knownError(err, "Could not delete the candidate");
+  }
+  revalidatePath("/candidates");
+  revalidatePath("/jobs");
+  return { ok: true };
+}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { DeleteCandidateButton } from "@/components/candidates/delete-candidate-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,7 +33,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
           <Button asChild variant="outline">
             <Link href={`/candidates/${candidate.id}/edit`}>Edit</Link>
           </Button>
-          <Button variant="destructive">Delete</Button>
+          <DeleteCandidateButton id={candidate.id} name={candidate.name} />
         </div>
       </div>
 
