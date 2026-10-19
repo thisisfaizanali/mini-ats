@@ -23,7 +23,17 @@ export default async function NewCandidatePage() {
           <CardTitle>New candidate</CardTitle>
         </CardHeader>
         <CardContent>
-          <CandidateForm jobs={jobs} />
+          {jobs.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              No open jobs.{" "}
+              <Link href="/jobs" className="underline">
+                Create a job
+              </Link>{" "}
+              first.
+            </p>
+          ) : (
+            <CandidateForm jobs={jobs} />
+          )}
         </CardContent>
       </Card>
     </div>

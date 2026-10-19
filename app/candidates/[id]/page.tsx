@@ -75,11 +75,15 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
             <CardTitle>Skills</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {candidate.skills.map((s) => (
-              <Badge key={s} variant="secondary">
-                {s}
-              </Badge>
-            ))}
+            {candidate.skills.length === 0 ? (
+              <p className="text-sm">—</p>
+            ) : (
+              candidate.skills.map((s) => (
+                <Badge key={s} variant="secondary">
+                  {s}
+                </Badge>
+              ))
+            )}
           </CardContent>
         </Card>
 
