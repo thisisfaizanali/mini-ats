@@ -2,12 +2,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DeleteCandidateButton } from "@/components/candidates/delete-candidate-button";
+import { StageSelect } from "@/components/candidates/stage-select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format";
-import { SOURCE_LABELS, STAGE_BADGE_CLASSES, STAGE_LABELS } from "@/lib/stages";
+import { SOURCE_LABELS } from "@/lib/stages";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +26,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold">{candidate.name}</h1>
-          <Badge className={STAGE_BADGE_CLASSES[candidate.stage]}>
-            {STAGE_LABELS[candidate.stage]}
-          </Badge>
+          <StageSelect id={candidate.id} stage={candidate.stage} />
         </div>
         <div className="flex gap-2">
           <Button asChild variant="outline">

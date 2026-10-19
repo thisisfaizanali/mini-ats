@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { type ActionResult, validationError } from "@/lib/action-result";
 import { db } from "@/lib/db";
-import { candidateSchema } from "@/lib/validations";
+import { candidateSchema, stageSchema } from "@/lib/validations";
 
 const jobNotOpen: ActionResult = {
   ok: false,
@@ -94,4 +94,32 @@ export async function deleteCandidate(id: string): Promise<ActionResult> {
   revalidatePath("/candidates");
   revalidatePath("/jobs");
   return { ok: true };
+}
+
+export async function updateCandidateStage(id: string, stage: unknown): Promise<ActionResult> {
+  const parsed = stageSchema.safeParse(stage);
+  if (!parsed.success) return { ok: false, error: "Invalid stage" };
+  const toStage = parsed.data;
+
+  try {
+    // Transaction: candidate.stage and its StageChange row must always agree.
+    const result = await db.$transaction(async (tx): Promise<ActionResult> => {
+      const current = await tx.candidate.findUnique({ where: { id }, select: { stage: true } });
+      if (!current) return { ok: false, error: "Candidate not found" };
+      if (current.stage === toStage) return { ok: true, id };
+      await tx.candidate.update({ where: { id }, data: { stage: toStage } });
+      await tx.stageChange.create({
+        data: { candidateId: id, fromStage: current.stage, toStage },
+      });
+      return { ok: true, id };
+    });
+    if (!result.ok) return result;
+  } catch {
+    return { ok: false, error: "Could not change the stage" };
+  }
+  revalidatePath("/candidates");
+  revalidatePath(`/candidates/${id}`);
+  revalidatePath("/board");
+  revalidatePath("/");
+  return { ok: true, id };
 }
