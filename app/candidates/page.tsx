@@ -1,4 +1,4 @@
-import { Users } from "lucide-react";
+import { Download, Users } from "lucide-react";
 import Link from "next/link";
 
 import { CandidateFilters } from "@/components/candidates/candidate-filters";
@@ -36,8 +36,17 @@ export default async function CandidatesPage({
   const where = buildCandidateWhere(params);
   const [total, jobs] = await Promise.all([
     db.candidate.count({ where }),
-    db.job.findMany({ select: { id: true, title: true }, orderBy: { title: "asc" } }),
+    db.job.findMany({
+      select: { id: true, title: true },
+      orderBy: { title: "asc" },
+    }),
   ]);
+  const exportParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(sp)) {
+    if (key === "page") continue;
+    for (const v of [value].flat())
+      if (v !== undefined) exportParams.append(key, v);
+  }
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const page = Math.min(params.page, totalPages);
   const candidates = await db.candidate.findMany({
@@ -57,9 +66,19 @@ export default async function CandidatesPage({
             {total} {total === 1 ? "candidate" : "candidates"}
           </p>
         </div>
-        <Button asChild>
-          <Link href="/candidates/new">New candidate</Link>
-        </Button>
+        <div className="flex flex-wrap justify-end gap-2">
+          {total > 0 && (
+            <Button asChild variant="outline">
+              <a href={`/candidates/export?${exportParams}`} download>
+                <Download />
+                Export CSV
+              </a>
+            </Button>
+          )}
+          <Button asChild>
+            <Link href="/candidates/new">New candidate</Link>
+          </Button>
+        </div>
       </div>
 
       <CandidateFilters jobs={jobs} />
@@ -96,14 +115,21 @@ export default async function CandidatesPage({
               {candidates.map((c) => (
                 <TableRow key={c.id}>
                   <TableCell>
-                    <Link href={`/candidates/${c.id}`} className="font-medium hover:underline">
+                    <Link
+                      href={`/candidates/${c.id}`}
+                      className="font-medium hover:underline"
+                    >
                       {c.name}
                     </Link>
-                    <div className="text-muted-foreground text-xs">{c.email}</div>
+                    <div className="text-muted-foreground text-xs">
+                      {c.email}
+                    </div>
                   </TableCell>
                   <TableCell>{c.job.title}</TableCell>
                   <TableCell>
-                    <Badge className={STAGE_BADGE_CLASSES[c.stage]}>{STAGE_LABELS[c.stage]}</Badge>
+                    <Badge className={STAGE_BADGE_CLASSES[c.stage]}>
+                      {STAGE_LABELS[c.stage]}
+                    </Badge>
                   </TableCell>
                   <TableCell>{SOURCE_LABELS[c.source]}</TableCell>
                   <TableCell>{formatDate(c.appliedAt)}</TableCell>
@@ -114,7 +140,12 @@ export default async function CandidatesPage({
         </div>
       )}
 
-      <Pagination page={page} totalPages={totalPages} total={total} searchParams={sp} />
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        searchParams={sp}
+      />
     </div>
   );
 }
