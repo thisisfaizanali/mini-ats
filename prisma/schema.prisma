@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Stage {
+  APPLIED
+  SCREENING
+  INTERVIEW
+  OFFER
+  HIRED
+  REJECTED
+}
+
+enum Source {
+  LINKEDIN
+  REFERRAL
+  JOB_BOARD
+  CAREERS_PAGE
+  OTHER
+}
+
+enum JobStatus {
+  OPEN
+  CLOSED
+}
+
+model Job {
+  id          String      @id @default(cuid())
+  title       String
+  department  String
+  location    String
+  status      JobStatus   @default(OPEN)
+  description String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  candidates  Candidate[]
+}
+
+model Candidate {
+  id        String        @id @default(cuid())
+  name      String
+  email     String        @unique
+  phone     String?
+  skills    String[]
+  source    Source
+  resumeUrl String?
+  notes     String?
+  stage     Stage         @default(APPLIED)
+  appliedAt DateTime      @default(now())
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  jobId     String
+  job       Job           @relation(fields: [jobId], references: [id], onDelete: Restrict)
+  history   StageChange[]
+
+  @@index([stage])
+  @@index([jobId])
+  @@index([appliedAt])
+}
+
+model StageChange {
+  id          String    @id @default(cuid())
+  candidateId String
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  fromStage   Stage?
+  toStage     Stage
+  changedAt   DateTime  @default(now())
+
+  @@index([candidateId, changedAt])
+}
