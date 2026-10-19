@@ -2,19 +2,21 @@ import { JobStatus, Source, Stage } from "@prisma/client";
 import { z } from "zod";
 
 const text = (min: number, max: number) => z.string().trim().min(min).max(max);
+const optionalText = (max: number) =>
+  z.string().trim().max(max).optional().transform((v) => v || undefined);
 
 export const jobSchema = z.object({
   title: text(2, 100),
   department: text(2, 100),
   location: text(2, 100),
   status: z.enum(JobStatus),
-  description: z.string().trim().max(2000).optional(),
+  description: optionalText(2000),
 });
 
 export const candidateSchema = z.object({
   name: text(2, 100),
   email: z.string().trim().toLowerCase().pipe(z.email()),
-  phone: z.string().trim().max(20).optional(),
+  phone: optionalText(20),
   skills: z
     .string()
     .transform((s) => [
@@ -37,7 +39,7 @@ export const candidateSchema = z.object({
     .union([z.url(), z.literal("")])
     .optional()
     .transform((v) => v || undefined),
-  notes: z.string().trim().max(2000).optional(),
+  notes: optionalText(2000),
 });
 
 export const stageSchema = z.enum(Stage);
