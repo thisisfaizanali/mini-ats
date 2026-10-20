@@ -2,7 +2,7 @@
 
 A small applicant tracking system for managing jobs, candidates and their hiring stages.
 
-Live demo: _coming soon_
+Live demo: https://mini-ats-swart-phi.vercel.app
 
 ## Features
 
