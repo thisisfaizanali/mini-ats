@@ -4,6 +4,8 @@ A small applicant tracking system for managing jobs, candidates and their hiring
 
 Live demo: https://mini-ats-swart-phi.vercel.app
 
+![Kanban board with candidates grouped by hiring stage](docs/screenshot.png)
+
 ## Features
 
 - Candidates: create, view, edit and delete
@@ -33,6 +35,13 @@ Live demo: https://mini-ats-swart-phi.vercel.app
 
 Prerequisites: Node 20+, pnpm, and a Postgres database (a free [Neon](https://neon.tech) project works).
 
+Clone the repo:
+
+```bash
+git clone https://github.com/thisisfaizanali/mini-ats.git
+cd mini-ats
+```
+
 Create `.env` in the project root:
 
 ```bash
@@ -45,13 +54,15 @@ DIRECT_URL="postgresql://USER:PASSWORD@HOST.REGION.aws.neon.tech/DB?sslmode=requ
 Then:
 
 ```bash
-pnpm install
-pnpm prisma migrate deploy
-pnpm prisma db seed
+pnpm install                # also runs prisma generate
+pnpm prisma migrate deploy  # create the tables
+pnpm prisma db seed         # load sample jobs and candidates (wipes existing data)
 pnpm dev
 ```
 
 Open http://localhost:3000.
+
+Other scripts: `pnpm build`, `pnpm start`, `pnpm lint`, `pnpm tsc --noEmit`.
 
 ## Data model
 
