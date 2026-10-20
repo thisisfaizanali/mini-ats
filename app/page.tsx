@@ -38,7 +38,7 @@ export default async function DashboardPage() {
     { label: "Open jobs", value: kpis.openJobs, hint: "Accepting candidates", icon: Briefcase },
     {
       label: "Avg. days to hire",
-      value: kpis.avgDaysToHire ?? "—",
+      value: kpis.avgDaysToHire ?? "N/A",
       hint: "Applied to hired",
       icon: Clock,
     },

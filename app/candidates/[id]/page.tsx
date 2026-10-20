@@ -65,7 +65,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
                 {candidate.phone}
               </a>
             ) : (
-              <p>—</p>
+              <p className="text-muted-foreground">No phone</p>
             )}
           </CardContent>
         </Card>
@@ -87,7 +87,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
             {candidate.skills.length === 0 ? (
-              <p className="text-sm">—</p>
+              <p className="text-muted-foreground text-sm">No skills listed</p>
             ) : (
               candidate.skills.map((s) => (
                 <Badge key={s} variant="secondary">
@@ -113,7 +113,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
                 {candidate.resumeUrl}
               </a>
             ) : (
-              "—"
+              "No resume"
             )}
           </CardContent>
         </Card>
@@ -122,7 +122,7 @@ export default async function CandidatePage({ params }: { params: Promise<{ id: 
           <CardHeader>
             <CardTitle>Notes</CardTitle>
           </CardHeader>
-          <CardContent className="text-sm whitespace-pre-wrap">{candidate.notes || "—"}</CardContent>
+          <CardContent className="text-sm whitespace-pre-wrap">{candidate.notes || "No notes"}</CardContent>
         </Card>
 
         <Card className="md:col-span-2">
